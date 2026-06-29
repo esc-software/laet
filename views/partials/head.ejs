@@ -1,0 +1,54 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Montserrat', sans-serif; background: black; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes enterRight {
+    from { opacity: 0; transform: translateX(-12px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .fade-up { animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .fade-up-d1 { animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both; }
+  .fade-up-d2 { animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.24s both; }
+  .fade-up-d3 { animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.36s both; }
+  .fade-up-d4 { animation: fadeUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.48s both; }
+  .slide-down { animation: slideDown 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .enter-right { animation: enterRight 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  input, button, a { transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+  input:focus {
+    border-color: white !important;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.5), 0 0 32px rgba(255,255,255,0.03) !important;
+    transform: translateY(-1px);
+  }
+  input:hover { border-color: rgba(255,255,255,0.5); }
+  .btn-submit {
+    position: relative; overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-submit::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: white;
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 0;
+  }
+  .btn-submit:hover::after { transform: scaleX(1); transform-origin: left; }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,255,255,0.04); }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit span { position: relative; z-index: 1; }
+  .btn-outline { transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+  .btn-outline:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(255,255,255,0.03); }
+  .btn-outline:active { transform: translateY(0); }
+  hr.rule { border: 0; height: 1px; background: rgba(255,255,255,0.08); margin: 0; }
+</style>

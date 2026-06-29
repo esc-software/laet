@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>BY LAET — Admin</title>
+  <%- include('../partials/head') %>
+</head>
+<body class="bg-black min-h-screen text-white">
+
+  <header class="border-b border-white/10 fade-up">
+    <div class="max-w-xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="/images/logo-laet-01.svg" alt="Laet Marda" class="h-6">
+        <span class="text-white/40 text-xs tracking-[0.15em] uppercase font-light">Novo Cadastro</span>
+      </div>
+      <a href="/admin" class="text-xs tracking-[0.15em] uppercase font-light text-white/60 hover:text-white transition">&#8592; Voltar</a>
+    </div>
+  </header>
+
+  <div class="max-w-xl mx-auto px-6 py-10 fade-up-d1">
+    <h2 class="text-white text-2xl font-extrabold tracking-tight mb-8">+ Novo cadastro</h2>
+
+    <% if (errors.length > 0) { %>
+      <div class="border border-white/20 rounded-xl px-5 py-4 mb-8 slide-down">
+        <% errors.forEach(function(e) { %>
+          <p class="text-white/80 text-sm font-light"><%= e.msg %></p>
+        <% }); %>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/admin/criar" class="space-y-5 fade-up-d2">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div>
+        <label for="nome" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-bold">Nome</label>
+        <input type="text" id="nome" name="nome" value="<%= old.nome || '' %>" maxlength="100" required
+          class="w-full bg-transparent border border-white/30 rounded-xl px-5 py-3.5 text-white outline-none text-base font-light tracking-wide">
+      </div>
+      <div>
+        <label for="instagram" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-bold">Instagram</label>
+        <input type="text" id="instagram" name="instagram" placeholder="@usuario" value="<%= old.instagram || '' %>" maxlength="50" required
+          class="w-full bg-transparent border border-white/30 rounded-xl px-5 py-3.5 text-white outline-none text-base font-light tracking-wide">
+      </div>
+      <div>
+        <label for="telefone" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-bold">WhatsApp</label>
+        <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999" value="<%= old.telefone || '' %>" required
+          class="w-full bg-transparent border border-white/30 rounded-xl px-5 py-3.5 text-white outline-none text-base font-light tracking-wide">
+      </div>
+      <div>
+        <label for="cpf" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-bold">CPF</label>
+        <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00" value="<%= old.cpf || '' %>" maxlength="14" required
+          class="w-full bg-transparent border border-white/30 rounded-xl px-5 py-3.5 text-white outline-none text-base font-light tracking-wide">
+      </div>
+
+      <div>
+        <p class="text-white/80 text-xs uppercase tracking-[0.25em] mb-3 font-bold">Ear Grillz Aequilibrium</p>
+        <div class="flex gap-2">
+          <label class="flex-1 border border-white/30 rounded-xl px-3 py-3 text-center cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+            <input type="radio" name="earQuantity" value="0" class="sr-only"
+              <%= (!old.earQuantity || old.earQuantity === '0') ? 'checked' : '' %>>
+            <span class="block text-white text-sm font-bold">Não<br>adquirir</span>
+          </label>
+          <label class="flex-1 border border-white/30 rounded-xl px-3 py-3 text-center cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+            <input type="radio" name="earQuantity" value="1" class="sr-only"
+              <%= old.earQuantity === '1' ? 'checked' : '' %>>
+            <span class="block text-white text-sm font-bold">1 orelha</span>
+            <span class="block text-white/50 text-xs font-extralight mt-0.5">R$ 800</span>
+          </label>
+          <label class="flex-1 border border-white/30 rounded-xl px-3 py-3 text-center cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+            <input type="radio" name="earQuantity" value="2" class="sr-only"
+              <%= old.earQuantity === '2' ? 'checked' : '' %>>
+            <span class="block text-white text-sm font-bold">2 orelhas</span>
+            <span class="block text-white/50 text-xs font-extralight mt-0.5">R$ 1.600</span>
+          </label>
+        </div>
+      </div>
+
+      <div id="adminPaymentSection" <%= (!old.earQuantity || old.earQuantity === '0') ? 'style="display:none"' : '' %>>
+        <p class="text-white/80 text-xs uppercase tracking-[0.25em] mb-3 font-bold">Pagamento</p>
+        <div class="flex gap-3">
+          <label class="flex-1 border border-white/30 rounded-xl px-4 py-3 text-center cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+            <input type="radio" name="paymentMethod" value="pix" class="sr-only"
+              <%= old.paymentMethod === 'pix' ? 'checked' : '' %>>
+            <span class="block text-white text-sm font-bold">PIX</span>
+          </label>
+          <label class="flex-1 border border-white/30 rounded-xl px-4 py-3 text-center cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+            <input type="radio" name="paymentMethod" value="credit" class="sr-only"
+              <%= old.paymentMethod === 'credit' ? 'checked' : '' %>>
+            <span class="block text-white text-sm font-bold">Cartão</span>
+          </label>
+        </div>
+      </div>
+
+      <button type="submit"
+        class="btn-submit w-full border border-white/40 text-white font-bold py-3.5 text-xs tracking-[0.3em] uppercase rounded-xl hover:text-black">
+        <span>Salvar</span>
+      </button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('cpf')?.addEventListener('input', function(e) {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 9) v = v.slice(0,3) + '.' + v.slice(3,6) + '.' + v.slice(6,9) + '-' + v.slice(9);
+      else if (v.length > 6) v = v.slice(0,3) + '.' + v.slice(3,6) + '.' + v.slice(6);
+      else if (v.length > 3) v = v.slice(0,3) + '.' + v.slice(3);
+      e.target.value = v;
+    });
+    document.getElementById('telefone')?.addEventListener('input', function(e) {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 6) v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+      else if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+      else if (v.length > 0) v = '(' + v;
+      e.target.value = v;
+    });
+    document.querySelectorAll('input[name="earQuantity"]').forEach(function(r) {
+      r.addEventListener('change', function() {
+        var section = document.getElementById('adminPaymentSection');
+        if (section) section.style.display = this.value === '0' ? 'none' : '';
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>BY LAET</title>
+  <%- include('partials/head') %>
+</head>
+<body class="bg-black min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-md text-center fade-up">
+    <div class="mb-12 fade-up-d1">
+      <img src="/images/logo-laet-01.svg" alt="Laet" class="h-16 mx-auto">
+    </div>
+    <div class="fade-up-d2">
+      <h1 class="text-white text-3xl font-extrabold tracking-tight mb-3">Inscrição recebida</h1>
+      <p class="text-white/70 text-lg font-light mb-6">Seu cadastro foi enviado com sucesso.</p>
+
+      <div class="border border-white/20 rounded-xs px-5 py-5 text-left space-y-3 mb-6">
+        <p class="text-white/80 text-xs uppercase tracking-[0.25em] font-black">Resumo do pedido</p>
+        <% if (earQuantity > 0) { %>
+          <div class="flex justify-between">
+            <span class="text-white/50 text-sm font-extralight">Ear Grillz Aequilibrium</span>
+            <span class="text-white text-sm font-bold"><%= earQuantity %>x</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-white/50 text-sm font-extralight">Valor total</span>
+            <span class="text-white text-sm font-bold">R$ <%= totalValue.toLocaleString('pt-BR') %></span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-white/50 text-sm font-extralight">Pagamento</span>
+            <span class="text-white text-sm font-bold"><%= paymentMethod === 'pix' ? 'PIX' : 'Cartão de crédito (no evento)' %></span>
+          </div>
+          <% if (paymentMethod === 'pix') { %>
+            <div class="border-t border-white/10 pt-3 mt-3">
+              <p class="text-white/50 text-xs font-extralight mb-2">
+                Status do pagamento: <span class="text-yellow-400 font-bold">Aguardando confirmação</span>
+              </p>
+              <p class="text-white/50 text-xs font-extralight">
+                Se você já pagou via PIX e enviou o comprovante via WhatsApp, aguarde a confirmação da equipe.
+              </p>
+            </div>
+          <% } else { %>
+            <div class="border-t border-white/10 pt-3 mt-3">
+              <p class="text-white/50 text-xs font-extralight">
+                Você assumiu o compromisso de adquirir o Ear Grillz. O pagamento com cartão de crédito será realizado presencialmente no dia do evento.
+              </p>
+            </div>
+          <% } %>
+        <% } else { %>
+          <div class="flex justify-between">
+            <span class="text-white/50 text-sm font-extralight">Ear Grillz Aequilibrium</span>
+            <span class="text-white/50 text-sm font-extralight">Não adquirido</span>
+          </div>
+          <div class="border-t border-white/10 pt-3 mt-3">
+            <p class="text-white/50 text-xs font-extralight">
+              Seu cadastro no evento foi confirmado. Você não selecionou o Ear Grillz.
+            </p>
+          </div>
+        <% } %>
+      </div>
+
+      <p class="text-white/40 text-sm font-light mb-8">A equipe Laet entrará em contato em breve.</p>
+    </div>
+    <a href="/"
+      class="inline-block mt-2 border border-white/40 text-white font-bold px-10 py-3 text-xs tracking-[0.3em] uppercase rounded-xl btn-outline hover:bg-white hover:text-black fade-up-d3">
+      Voltar
+    </a>
+  </div>
+</body>
+</html>

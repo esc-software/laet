@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>BY LAET — Admin</title>
+  <%- include('../partials/head') %>
+</head>
+<body class="bg-black min-h-screen flex flex-col items-center justify-center p-4">
+  <div class="w-full max-w-sm text-center fade-up">
+    <div class="mb-12 fade-up-d1">
+      <img src="/images/logo-laet-01.svg" alt="Laet Marda" class="h-12 mx-auto">
+    </div>
+    <div class="fade-up-d2">
+      <h1 class="text-white text-xl font-extrabold tracking-tight mb-1">Administração</h1>
+      <p class="text-white/50 text-sm font-light mb-10">Acesso restrito</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="border border-white/20 rounded-xl px-5 py-4 mb-8 slide-down">
+        <p class="text-white/80 text-sm font-light"><%= error %></p>
+      </div>
+    <% } %>
+
+    <form method="POST" action="/admin/login" class="space-y-5 fade-up-d3">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <div class="text-left">
+        <label for="user" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-bold">Usuário</label>
+        <input type="text" id="user" name="user" required
+          class="w-full bg-transparent border border-white/30 rounded-xl px-5 py-3.5 text-white outline-none text-base font-light tracking-wide">
+      </div>
+      <div class="text-left">
+        <label for="pass" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-bold">Senha</label>
+        <input type="password" id="pass" name="pass" required
+          class="w-full bg-transparent border border-white/30 rounded-xl px-5 py-3.5 text-white outline-none text-base font-light tracking-wide">
+      </div>
+      <button type="submit"
+        class="btn-submit w-full border border-white/40 text-white font-bold py-3.5 text-xs tracking-[0.3em] uppercase rounded-xl hover:text-black">
+        <span>Entrar</span>
+      </button>
+    </form>
+  </div>
+</body>
+</html>

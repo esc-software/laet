@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>BY LAET — Admin</title>
+  <%- include('../partials/head') %>
+</head>
+<body class="bg-black min-h-screen text-white">
+
+  <header class="border-b border-white/10 fade-up">
+    <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <img src="/images/logo-laet-01.svg" alt="Laet" class="h-6">
+        <span class="text-white/40 text-xs tracking-[0.15em] uppercase font-light">Painel</span>
+      </div>
+      <div class="flex items-center gap-5">
+        <a href="/admin/criar" class="text-xs tracking-[0.15em] uppercase font-bold text-white/60 hover:text-white transition">+ Novo</a>
+        <a href="/admin/exportar/csv" class="text-xs tracking-[0.15em] uppercase font-bold text-white/60 hover:text-white transition">CSV</a>
+        <a href="/admin/exportar/excel" class="text-xs tracking-[0.15em] uppercase font-bold text-white/60 hover:text-white transition">Excel</a>
+        <form method="POST" action="/admin/logout" style="display:inline">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <button type="submit" class="text-xs tracking-[0.15em] uppercase font-bold text-white/60 hover:text-black transition cursor-pointer">Sair</button>
+        </form>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-10 fade-up-d1">
+
+    <% if (message) { %>
+      <div class="border border-white/20 rounded-xl px-5 py-4 mb-8 slide-down">
+        <p class="text-white/80 text-sm font-light"><%= message %></p>
+      </div>
+    <% } %>
+
+    <div class="flex gap-12 mb-10">
+      <div>
+        <p class="text-5xl font-extrabold text-white"><%= total %></p>
+        <p class="text-white/50 text-xs uppercase tracking-[0.2em] mt-1 font-bold">Cadastros</p>
+      </div>
+      <div>
+        <p class="text-5xl font-extrabold text-white"><%= totalPages %></p>
+        <p class="text-white/50 text-xs uppercase tracking-[0.2em] mt-1 font-bold">Páginas</p>
+      </div>
+    </div>
+
+    <div class="mb-8 flex gap-3 items-end flex-wrap">
+      <form method="GET" action="/admin" class="flex gap-2 flex-1 min-w-[200px]">
+        <input type="hidden" name="payment" value="<%= paymentFilter %>">
+        <input type="text" name="search" placeholder="Buscar..."
+          value="<%= search %>"
+          maxlength="50"
+          class="flex-1 bg-transparent border border-white/30 rounded-xl px-4 py-2.5 text-white placeholder-white/30 outline-none text-sm font-light tracking-wide">
+        <button type="submit"
+          class="btn-outline border border-white/40 text-white font-bold px-5 py-2.5 text-xs tracking-[0.25em] uppercase rounded-xl hover:bg-white hover:text-black">Buscar</button>
+        <% if (search) { %>
+          <a href="/admin?payment=<%= paymentFilter %>"
+            class="btn-outline border border-white/20 text-white/60 font-bold px-4 py-2.5 text-xs tracking-[0.25em] uppercase rounded-xl hover:border-white hover:text-white">Limpar</a>
+        <% } %>
+      </form>
+
+      <div class="flex gap-2">
+        <a href="/admin<%= search ? '?search=' + search : '' %>"
+          class="px-4 py-2.5 text-xs tracking-[0.2em] uppercase font-bold rounded-xl transition <%= paymentFilter === '' ? 'bg-white text-black' : 'border border-white/30 text-white/60 hover:text-white' %>">
+          Todos
+        </a>
+        <a href="/admin?payment=pending<%= search ? '&search=' + search : '' %>"
+          class="px-4 py-2.5 text-xs tracking-[0.2em] uppercase font-bold rounded-xl transition <%= paymentFilter === 'pending' ? 'bg-yellow-500 text-black' : 'border border-white/30 text-white/60 hover:text-white' %>">
+          Pendentes
+        </a>
+        <a href="/admin?payment=paid<%= search ? '&search=' + search : '' %>"
+          class="px-4 py-2.5 text-xs tracking-[0.2em] uppercase font-bold rounded-xl transition <%= paymentFilter === 'paid' ? 'bg-green-500 text-black' : 'border border-white/30 text-white/60 hover:text-white' %>">
+          Pagos
+        </a>
+      </div>
+    </div>
+
+    <% if (registrations.length === 0) { %>
+      <div class="text-center py-20 fade-up-d2">
+        <div class="text-5xl mb-4">&#x1F50D;</div>
+        <p class="text-white/40 font-light">Nenhum cadastro encontrado.</p>
+      </div>
+    <% } else { %>
+      <div class="overflow-x-auto fade-up-d2">
+        <table class="w-full">
+          <thead>
+            <tr class="border-b border-white/10">
+              <th class="text-left py-3 pr-4 text-white/50 text-xs uppercase tracking-[0.2em] font-bold">Nome</th>
+              <th class="text-left py-3 pr-4 text-white/50 text-xs uppercase tracking-[0.2em] font-bold">Instagram</th>
+              <th class="text-left py-3 pr-4 text-white/50 text-xs uppercase tracking-[0.2em] font-bold">Tel</th>
+              <th class="text-left py-3 pr-4 text-white/50 text-xs uppercase tracking-[0.2em] font-bold">CPF</th>
+              <th class="text-left py-3 pr-4 text-white/50 text-xs uppercase tracking-[0.2em] font-bold">Peça</th>
+              <th class="text-left py-3 pr-4 text-white/50 text-xs uppercase tracking-[0.2em] font-bold">Pagamento</th>
+              <th class="text-left py-3 pr-4 text-white/50 text-xs uppercase tracking-[0.2em] font-bold">Data</th>
+              <th class="text-left py-3 pr-4 text-white/50 text-xs uppercase tracking-[0.2em] font-bold"></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% registrations.forEach(function(r) { %>
+              <tr class="border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300">
+                <td class="py-3 pr-4 text-white font-light tracking-wide"><%= r.nome %></td>
+                <td class="py-3 pr-4 text-white/70 font-light tracking-wide">@<%= r.instagram %></td>
+                <td class="py-3 pr-4 text-white/70 font-light tracking-wide"><%= r.telefone %></td>
+                <td class="py-3 pr-4 text-white/70 font-mono font-light tracking-wide"><%= r.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4') %></td>
+                <td class="py-3 pr-4">
+                  <span class="text-white font-light"><%= r.earQuantity != null ? r.earQuantity + 'x' : '-' %></span>
+                  <span class="text-white/40 text-xs block font-extralight">R$ <%= (r.totalValue || 0).toLocaleString('pt-BR') %></span>
+                </td>
+                <td class="py-3 pr-4">
+                  <% if (r.paymentMethod === 'pix') { %>
+                    <span class="text-white/70 text-xs font-light">PIX</span>
+                    <span class="block text-xs mt-0.5 font-bold <%= r.paymentStatus === 'paid' ? 'text-green-400' : 'text-yellow-400' %>">
+                      <%= r.paymentStatus === 'paid' ? 'Pago' : 'Pendente' %>
+                    </span>
+                    <% if (r.paymentConfirmedAt) { %>
+                      <span class="text-white/30 text-xs block font-extralight"><%= new Date(r.paymentConfirmedAt).toLocaleString('pt-BR') %></span>
+                    <% } %>
+                  <% } else if (r.paymentMethod === 'credit') { %>
+                    <span class="text-white/70 text-xs font-light">Cartão</span>
+                    <span class="text-blue-400 text-xs block font-bold">No evento</span>
+                  <% } else { %>
+                    <span class="text-white/30 text-xs font-light">—</span>
+                  <% } %>
+                </td>
+                <td class="py-3 pr-4 text-white/40 text-sm font-light"><%= new Date(r.createdAt).toLocaleString('pt-BR') %></td>
+                <td class="py-3 pr-4 whitespace-nowrap">
+                  <div class="flex gap-2">
+                    <% if (r.paymentMethod === 'pix' && r.paymentStatus === 'pending') { %>
+                      <form method="POST" action="/admin/confirmar-pagamento/<%= r._id %>" style="display:inline">
+                        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                        <button type="submit"
+                          class="text-xs tracking-[0.15em] uppercase font-bold text-green-400/70 hover:text-black transition-all duration-300"
+                          data-confirm="Confirmar pagamento deste cadastro?">
+                          Confirmar PIX
+                        </button>
+                      </form>
+                    <% } %>
+                    <form method="POST" action="/admin/remover/<%= r._id %>" style="display:inline" data-confirm="Remover este cadastro?">
+                      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                      <button type="submit" class="text-xs tracking-[0.15em] uppercase font-bold text-white/50 hover:text-black transition-all duration-300">Remover</button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+
+      <% if (totalPages > 1) { %>
+        <div class="flex justify-center gap-2 mt-10 fade-up-d3">
+          <% for (let i = 1; i <= totalPages; i++) { %>
+            <a href="/admin?page=<%= i %><%= search ? '&search=' + search : '' %><%= paymentFilter ? '&payment=' + paymentFilter : '' %>"
+              class="px-4 py-1.5 text-sm font-light transition-all duration-300 <%= i === page ? 'bg-white text-black font-bold' : 'text-white/60 hover:text-white' %>">
+              <%= i %>
+            </a>
+          <% } %>
+        </div>
+      <% } %>
+    <% } %>
+
+  </main>
+  <script>
+    (function() {
+      document.querySelectorAll('[data-confirm]').forEach(function(el) {
+        if (el.tagName === 'FORM') {
+          el.addEventListener('submit', function(e) {
+            if (!confirm(this.getAttribute('data-confirm'))) e.preventDefault();
+          });
+        } else {
+          el.addEventListener('click', function(e) {
+            if (!confirm(this.getAttribute('data-confirm'))) e.preventDefault();
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>BY LAET</title>
+  <%- include('partials/head') %>
+  <style>
+    input:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px black inset !important; -webkit-text-fill-color: white !important; }
+    .terms-box { max-height: 180px; overflow-y: auto; }
+    .step { display: none; }
+    .step.active { display: block; animation: fadeUp 0.35s cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .step-indicator { display: flex; gap: 8px; justify-content: center; margin-bottom: 32px; }
+    .step-dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.15); transition: all 0.3s; }
+    .step-dot.active { background: white; width: 28px; border-radius: 5px; }
+    .step-dot.done { background: rgba(255,255,255,0.4); }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+  <div class="w-full max-w-md">
+
+    <div class="text-center mb-8 fade-up">
+      <img src="/images/logo-laet-01.svg" alt="Laet" class="h-16 mx-auto">
+    </div>
+
+    <% if (jaCadastrado) { %>
+      <div class="text-center py-10 fade-up-d1">
+        <p class="text-white text-2xl font-extrabold tracking-tight">Você já está cadastrado</p>
+        <p class="text-white/50 text-base mt-2 font-extralight">Seu cadastro já foi registrado.</p>
+      </div>
+    <% } else { %>
+      <% if (errors.length > 0) { %>
+        <div class="border border-white/20 rounded-xs px-5 py-4 mb-8 slide-down">
+          <% errors.forEach(function(e) { %>
+            <p class="text-red-300 text-sm font-extralight"><%= e.msg %></p>
+          <% }); %>
+        </div>
+      <% } %>
+
+      <div id="stepIndicator" class="step-indicator fade-up-d1">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+
+      <form method="POST" action="/" novalidate class="fade-up-d2">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+        <!-- Step 1: Dados Pessoais -->
+        <div class="step active space-y-5" data-step="1">
+          <p class="text-white/80 text-xs uppercase tracking-[0.25em] font-black mb-6">Dados pessoais</p>
+
+          <div>
+            <label for="nome" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-black">Nome completo</label>
+            <input type="text" id="nome" name="nome" placeholder="Seu nome completo"
+              value="<%= old.nome || '' %>"
+              class="w-full bg-transparent border border-white/30 rounded-xs px-5 py-3.5 text-white placeholder-white/30 outline-none text-base font-extralight tracking-wide"
+              maxlength="100" required>
+          </div>
+
+          <div>
+            <label for="instagram" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-black">Instagram</label>
+            <input type="text" id="instagram" name="instagram" placeholder="@username"
+              value="<%= old.instagram || '' %>"
+              class="w-full bg-transparent border border-white/30 rounded-xs px-5 py-3.5 text-white placeholder-white/30 outline-none text-base font-extralight tracking-wide"
+              maxlength="50" required>
+          </div>
+
+          <div>
+            <label for="telefone" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-black">WhatsApp</label>
+            <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999"
+              value="<%= old.telefone || '' %>"
+              class="w-full bg-transparent border border-white/30 rounded-xs px-5 py-3.5 text-white placeholder-white/30 outline-none text-base font-extralight tracking-wide" required>
+            <p id="erroTelefone" class="text-red-300 text-xs font-extralight mt-1" style="display:none">Telefone inválido. Ex: (11) 99999-9999</p>
+          </div>
+
+          <div>
+            <label for="cpf" class="block text-white/80 text-xs uppercase tracking-[0.25em] mb-2 font-black">CPF</label>
+            <input type="text" id="cpf" name="cpf" placeholder="000.000.000-00"
+              value="<%= old.cpf || '' %>"
+              class="w-full bg-transparent border border-white/30 rounded-xs px-5 py-3.5 text-white placeholder-white/30 outline-none text-base font-extralight tracking-wide"
+              maxlength="14" required>
+            <p id="erroCpf" class="text-red-300 text-xs font-extralight mt-1" style="display:none">CPF inválido</p>
+          </div>
+
+          <button type="button" class="btn-nav w-full border border-white/40 text-white font-black py-4 text-xs tracking-[0.3em] uppercase rounded-xs mt-4 hover:text-black" data-step-nav="2">
+            <span>Continuar</span>
+          </button>
+        </div>
+
+        <!-- Step 2: Ear Grillz (optional extra) -->
+        <div class="step space-y-5" data-step="2">
+          <p class="text-white/80 text-xs uppercase tracking-[0.25em] font-black mb-2">Aequilibrium — Ear Grillz</p>
+          <p class="text-white/50 text-sm font-extralight mb-4">
+            Extra opcional. Pré-venda pelo preço de custo. Cada orelha: <span class="text-white font-bold">R$ 800</span>
+          </p>
+
+          <div class="flex gap-2" id="earQuantityGroup">
+            <label class="flex-1 border border-white/30 rounded-xs px-3 py-3 text-center cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+              <input type="radio" name="earQuantity" value="0" class="sr-only step-radio"
+                <%= (!old.earQuantity || old.earQuantity === '0') ? 'checked' : '' %>>
+              <span class="block text-white text-sm font-bold">Não vou<br>adquirir</span>
+              <span class="block text-white/40 text-xs font-extralight mt-1">Apenas evento</span>
+            </label>
+            <label class="flex-1 border border-white/30 rounded-xs px-3 py-3 text-center cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+              <input type="radio" name="earQuantity" value="1" class="sr-only step-radio"
+                <%= old.earQuantity === '1' ? 'checked' : '' %>>
+              <span class="block text-white text-sm font-bold">1 orelha</span>
+              <span class="block text-white/50 text-xs font-extralight mt-1">R$ 800</span>
+            </label>
+            <label class="flex-1 border border-white/30 rounded-xs px-3 py-3 text-center cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+              <input type="radio" name="earQuantity" value="2" class="sr-only step-radio"
+                <%= old.earQuantity === '2' ? 'checked' : '' %>>
+              <span class="block text-white text-sm font-bold">2 orelhas</span>
+              <span class="block text-white/50 text-xs font-extralight mt-1">R$ 1.600</span>
+            </label>
+          </div>
+
+          <p id="totalDisplay" class="text-white/50 text-xs font-extralight mt-2 text-center">
+            <% if (old.earQuantity && old.earQuantity !== '0') { %>
+              Total: R$ <%= (parseInt(old.earQuantity) * 800).toLocaleString('pt-BR') %>
+            <% } else { %>
+              Nenhum Ear Grillz selecionado
+            <% } %>
+          </p>
+
+          <div class="flex gap-3 mt-4">
+            <button type="button" class="flex-1 border border-white/30 text-white/60 font-black py-4 text-xs tracking-[0.3em] uppercase rounded-xs hover:text-black transition" data-step-nav="1">
+              <span>Voltar</span>
+            </button>
+            <button type="button" class="btn-nav flex-1 border border-white/40 text-white font-black py-4 text-xs tracking-[0.3em] uppercase rounded-xs hover:text-black" data-step-nav="3">
+              <span>Continuar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 3: Pagamento (only if earQuantity > 0) -->
+        <div class="step space-y-5" data-step="3">
+          <div id="paymentContent">
+            <p class="text-white/80 text-xs uppercase tracking-[0.25em] font-black mb-2">Forma de pagamento</p>
+
+            <div class="space-y-3" id="paymentMethodGroup">
+              <label class="block border border-white/30 rounded-xs px-4 py-3.5 cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+                <input type="radio" name="paymentMethod" value="pix" class="sr-only step-radio"
+                  <%= old.paymentMethod === 'pix' ? 'checked' : '' %>>
+                <span class="text-white text-sm font-bold">PIX</span>
+                <span class="block text-white/50 text-xs font-extralight mt-0.5">Pagamento obrigatório no ato do cadastro</span>
+              </label>
+              <label class="block border border-white/30 rounded-xs px-4 py-3.5 cursor-pointer transition hover:border-white has-[:checked]:border-white has-[:checked]:bg-white/5">
+                <input type="radio" name="paymentMethod" value="credit" class="sr-only step-radio"
+                  <%= old.paymentMethod === 'credit' ? 'checked' : '' %>>
+                <span class="text-white text-sm font-bold">Cartão de crédito</span>
+                <span class="block text-white/50 text-xs font-extralight mt-0.5">Pague no evento — ao escolher, você assume o compromisso</span>
+              </label>
+            </div>
+
+            <div id="pixSection" class="border border-white/20 rounded-xs px-5 py-5 space-y-4" style="display:none">
+              <p class="text-white/80 text-xs uppercase tracking-[0.25em] font-black">Instruções PIX</p>
+              <p class="text-white/60 text-xs font-extralight leading-relaxed mb-3">
+                O pagamento via PIX deve ser realizado <strong class="text-white">agora, neste momento</strong>. 
+                Seu cadastro só será confirmado após a confirmação do pagamento.
+              </p>
+              <div class="bg-white/5 rounded-xs px-4 py-3">
+                <p class="text-white/50 text-xs font-extralight mb-1">Chave PIX</p>
+                <p class="text-white text-sm font-bold tracking-wide"><%= pixKey %></p>
+              </div>
+              <div class="bg-white/5 rounded-xs px-4 py-3">
+                <p class="text-white/50 text-xs font-extralight mb-1">Valor total</p>
+                <p class="text-white text-sm font-bold" id="pixValor">—</p>
+              </div>
+              <div class="bg-white/5 rounded-xs px-4 py-3">
+                <p class="text-white/50 text-xs font-extralight mb-1">WhatsApp para comprovante</p>
+                <p class="text-white text-sm font-bold tracking-wide"><%= whatsappContact %></p>
+              </div>
+              <p class="text-white/50 text-xs font-extralight leading-relaxed">
+                Após realizar o PIX, envie o comprovante via WhatsApp para o número acima.
+                Seu cadastro só será confirmado após a confirmação do pagamento.
+              </p>
+              <label class="flex items-start gap-3 cursor-pointer">
+                <input type="checkbox" name="paymentConfirmedByUser" value="true"
+                  class="mt-0.5 accent-white"
+                  <%= old.paymentConfirmedByUser === 'true' ? 'checked' : '' %>>
+                <span class="text-white/70 text-xs font-extralight leading-relaxed">
+                  Realizei o pagamento via PIX no valor total e enviei o comprovante via WhatsApp
+                </span>
+              </label>
+            </div>
+
+            <div id="creditSection" class="border border-white/20 rounded-xs px-5 py-5 space-y-3" style="display:none">
+              <p class="text-white/70 text-xs font-extralight leading-relaxed">
+                Ao selecionar cartão de crédito, você assume o compromisso de adquirir o Ear Grillz.
+                Os materiais serão encomendados com base na sua seleção e não aceitamos desistência.
+              </p>
+              <p class="text-white/60 text-xs font-extralight leading-relaxed">
+                O pagamento será realizado presencialmente no dia do evento com cartão de crédito.
+                Sua inscrição será confirmada no ato do pagamento presencial.
+              </p>
+            </div>
+          </div>
+
+          <div id="noPaymentSection" class="border border-white/10 rounded-xs px-5 py-8 text-center" style="display:none">
+            <p class="text-white/60 text-sm font-extralight">Você não selecionou o Ear Grillz.</p>
+            <p class="text-white/40 text-xs font-extralight mt-1">Nenhum pagamento necessário.</p>
+          </div>
+
+          <div class="flex gap-3 mt-4">
+            <button type="button" class="flex-1 border border-white/30 text-white/60 font-black py-4 text-xs tracking-[0.3em] uppercase rounded-xs hover:text-black transition" data-step-nav="2">
+              <span>Voltar</span>
+            </button>
+            <button type="button" class="btn-nav flex-1 border border-white/40 text-white font-black py-4 text-xs tracking-[0.3em] uppercase rounded-xs hover:text-black" data-step-nav="4">
+              <span>Continuar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Step 4: Termos + Finalizar -->
+        <div class="step space-y-5" data-step="4">
+          <p class="text-white/80 text-xs uppercase tracking-[0.25em] font-black mb-2">Revisão e termos</p>
+
+          <div class="border border-white/10 rounded-xs px-4 py-3 space-y-1 text-sm">
+            <p class="text-white/50 font-extralight">Produto: <span class="text-white font-bold">Aequilibrium</span></p>
+            <p class="text-white/50 font-extralight">Quantidade: <span class="text-white font-bold" id="resumoQtd">—</span></p>
+            <p class="text-white/50 font-extralight">Valor: <span class="text-white font-bold" id="resumoValor">—</span></p>
+            <p class="text-white/50 font-extralight">Pagamento: <span class="text-white font-bold" id="resumoPagamento">—</span></p>
+          </div>
+
+          <div>
+            <p class="text-white/80 text-xs uppercase tracking-[0.25em] mb-3 font-black">Termos de serviço</p>
+            <div class="terms-box border border-white/20 rounded-xs px-4 py-3.5 mb-3 bg-white/5">
+              <p class="text-white/60 text-xs font-extralight leading-relaxed whitespace-pre-line">
+1. O valor pago via PIX refere-se ao preço de custo do Ear Grillz modelo Aequilibrium e não será reembolsado em hipótese alguma, salvo por cancelamento do evento por parte da organização.
+
+2. Ao optar pelo pagamento via PIX, o comprador declara estar ciente de que o valor é referente à compra do produto e que não há possibilidade de devolução, troca ou estorno, exceto nos casos previstos em lei.
+
+3. O pedido será produzido sob medida com base nas informações fornecidas. Por se tratar de um produto personalizado, não aceitamos desistência após a confirmação do pagamento.
+
+4. Caso o pagamento seja via cartão de crédito (a ser pago no evento), a escolha do produto implica em compromisso de compra. Os materiais serão encomendados mediante sua seleção e o não comparecimento não desobriga o pagamento.
+
+5. A organização se reserva o direito de cancelar o pedido caso o pagamento via PIX não seja confirmado em até 24 horas após o envio do comprovante.
+
+6. O prazo de entrega do Ear Grillz será informado no dia do evento. Peças personalizadas podem ter prazos diferentes.
+
+7. Ao aceitar estes termos, o comprador autoriza o uso de sua imagem e dados para fins de organização do evento e produção do produto.
+
+8. Estes termos são regidos pela legislação brasileira. Qualquer disputa será resolvida no foro da comarca do evento.
+              </p>
+            </div>
+            <label class="flex items-start gap-3 cursor-pointer">
+              <input type="checkbox" name="termsAccepted" value="true"
+                class="mt-0.5 accent-white" required
+                <%= old.termsAccepted === 'true' ? 'checked' : '' %>>
+              <span class="text-white/70 text-xs font-extralight leading-relaxed">
+                Aceito os termos de serviço acima. Declaro que li e compreendi todas as condições, incluindo a política de não reembolso.
+              </span>
+            </label>
+          </div>
+
+          <div class="absolute left-[-9999px] opacity-0 h-0 overflow-hidden">
+            <input type="text" name="honeypot" tabindex="-1" autocomplete="off">
+          </div>
+          <div class="flex gap-3 mt-4">
+            <button type="button" class="flex-1 border border-white/30 text-white/60 font-black py-4 text-xs tracking-[0.3em] uppercase rounded-xs hover:text-black transition" data-step-nav="3">
+              <span>Voltar</span>
+            </button>
+            <button type="submit" class="btn-submit flex-1 border border-white/40 text-white font-black py-4 text-xs tracking-[0.3em] uppercase rounded-xs hover:text-black">
+              <span>Finalizar cadastro</span>
+            </button>
+          </div>
+        </div>
+
+      </form>
+    <% } %>
+  </div>
+
+  <script>
+    (function() {
+      var stepAtual = 1;
+      var UNIT_PRICE = 800;
+
+      function irParaStep(n) {
+        if (n > stepAtual && !validarStep(stepAtual)) return;
+        document.querySelectorAll('.step').forEach(function(el) {
+          el.classList.remove('active');
+        });
+        var el = document.querySelector('.step[data-step="' + n + '"]');
+        if (el) el.classList.add('active');
+        stepAtual = n;
+        atualizarIndicador();
+        if (n === 3) { atualizarStep3(); atualizarTotal(); }
+        if (n === 4) atualizarResumo();
+      }
+
+      function marcarErro(el) {
+        el.style.borderColor = '#f87171';
+        setTimeout(function() { el.style.borderColor = ''; }, 2500);
+      }
+
+      function validarCPF(str) {
+        var d = str.replace(/\D/g, '');
+        if (d.length !== 11 || /^(\d)\1{10}$/.test(d)) return false;
+        function calc(slice, factor) {
+          var sum = 0;
+          for (var i = 0; i < slice.length; i++) sum += parseInt(slice[i]) * factor--;
+          var r = (sum * 10) % 11;
+          return r === 10 ? 0 : r;
+        }
+        return calc(d.slice(0, 9), 10) === parseInt(d[9]) && calc(d.slice(0, 10), 11) === parseInt(d[10]);
+      }
+
+      function validarStep(n) {
+        var step = document.querySelector('.step[data-step="' + n + '"]');
+        if (!step) return true;
+        var inputs = step.querySelectorAll('input[required]');
+        for (var i = 0; i < inputs.length; i++) {
+          var el = inputs[i];
+          if (el.type !== 'radio' && !el.value.trim()) {
+            marcarErro(el); el.focus();
+            return false;
+          }
+        }
+        if (n === 1) {
+          var cpfEl = document.getElementById('cpf');
+          var telEl = document.getElementById('telefone');
+          var erroCpf = document.getElementById('erroCpf');
+          var erroTel = document.getElementById('erroTelefone');
+          if (cpfEl && !validarCPF(cpfEl.value)) {
+            marcarErro(cpfEl); cpfEl.focus();
+            if (erroCpf) erroCpf.style.display = '';
+            return false;
+          } else { if (erroCpf) erroCpf.style.display = 'none'; }
+          if (telEl) {
+            var t = telEl.value.replace(/\D/g, '');
+            if (t.length < 10 || t.length > 11) {
+              marcarErro(telEl); telEl.focus();
+              if (erroTel) erroTel.style.display = '';
+              return false;
+            } else { if (erroTel) erroTel.style.display = 'none'; }
+          }
+        }
+        if (n === 2 && !step.querySelector('input[name="earQuantity"]:checked')) {
+          var g = document.getElementById('earQuantityGroup');
+          if (g) { g.style.borderColor = '#f87171'; setTimeout(function() { g.style.borderColor = ''; }, 2000); }
+          return false;
+        }
+        if (n === 3) {
+          var qtd = document.querySelector('input[name="earQuantity"]:checked');
+          if (qtd && qtd.value !== '0' && !step.querySelector('input[name="paymentMethod"]:checked')) {
+            var g = document.getElementById('paymentMethodGroup');
+            if (g) { g.style.borderColor = '#f87171'; setTimeout(function() { g.style.borderColor = ''; }, 2000); }
+            return false;
+          }
+        }
+        return true;
+      }
+
+      function atualizarIndicador() {
+        document.querySelectorAll('.step-dot').forEach(function(d, i) {
+          d.classList.remove('active', 'done');
+          if (i + 1 === stepAtual) d.classList.add('active');
+          else if (i + 1 < stepAtual) d.classList.add('done');
+        });
+      }
+
+      function temEarGrillz() {
+        var qtd = document.querySelector('input[name="earQuantity"]:checked');
+        return qtd && qtd.value !== '0';
+      }
+
+      function atualizarTotal() {
+        var qtd = document.querySelector('input[name="earQuantity"]:checked');
+        var totalDisplay = document.getElementById('totalDisplay');
+        var pixValor = document.getElementById('pixValor');
+        if (qtd && qtd.value !== '0') {
+          var total = parseInt(qtd.value) * UNIT_PRICE;
+          var texto = total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          if (totalDisplay) totalDisplay.textContent = 'Total: ' + texto;
+          if (pixValor) pixValor.textContent = texto;
+        } else {
+          if (totalDisplay) totalDisplay.textContent = 'Nenhum Ear Grillz selecionado';
+          if (pixValor) pixValor.textContent = '—';
+        }
+      }
+
+      function atualizarStep3() {
+        var showPayment = temEarGrillz();
+        var paymentContent = document.getElementById('paymentContent');
+        var noPaymentSection = document.getElementById('noPaymentSection');
+        if (showPayment) {
+          if (paymentContent) paymentContent.style.display = '';
+          if (noPaymentSection) noPaymentSection.style.display = 'none';
+          alternarPagamento();
+        } else {
+          if (paymentContent) paymentContent.style.display = 'none';
+          if (noPaymentSection) noPaymentSection.style.display = '';
+        }
+      }
+
+      function alternarPagamento() {
+        var pix = document.querySelector('input[name="paymentMethod"][value="pix"]');
+        var credit = document.querySelector('input[name="paymentMethod"][value="credit"]');
+        var pixSection = document.getElementById('pixSection');
+        var creditSection = document.getElementById('creditSection');
+
+        if (pix && pix.checked) {
+          if (pixSection) pixSection.style.display = '';
+          if (creditSection) creditSection.style.display = 'none';
+          atualizarTotal();
+        } else if (credit && credit.checked) {
+          if (pixSection) pixSection.style.display = 'none';
+          if (creditSection) creditSection.style.display = '';
+        } else {
+          if (pixSection) pixSection.style.display = 'none';
+          if (creditSection) creditSection.style.display = 'none';
+        }
+      }
+
+      function atualizarResumo() {
+        var qtd = document.querySelector('input[name="earQuantity"]:checked');
+        var metodo = document.querySelector('input[name="paymentMethod"]:checked');
+
+        if (qtd) {
+          var qtdEl = document.getElementById('resumoQtd');
+          var valEl = document.getElementById('resumoValor');
+          if (qtd.value === '0') {
+            if (qtdEl) qtdEl.textContent = 'Nenhum';
+            if (valEl) valEl.textContent = 'R$ 0';
+          } else {
+            var total = parseInt(qtd.value) * UNIT_PRICE;
+            if (qtdEl) qtdEl.textContent = qtd.value + ' orelha' + (qtd.value === '2' ? 's' : '');
+            if (valEl) valEl.textContent = 'R$ ' + total.toLocaleString('pt-BR');
+          }
+        }
+        if (metodo) {
+          var pagEl = document.getElementById('resumoPagamento');
+          if (pagEl) pagEl.textContent = metodo.value === 'pix' ? 'PIX' : 'Cartão de crédito';
+        } else {
+          var pagEl = document.getElementById('resumoPagamento');
+          if (pagEl) pagEl.textContent = '—';
+        }
+      }
+
+      // Navigation buttons — data-step-nav
+      document.querySelectorAll('[data-step-nav]').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          irParaStep(parseInt(this.getAttribute('data-step-nav')));
+        });
+      });
+
+      // Radio change listeners
+      document.querySelectorAll('input[name="earQuantity"]').forEach(function(r) {
+        r.addEventListener('change', function() {
+          atualizarTotal();
+          if (stepAtual === 3) atualizarStep3();
+        });
+      });
+      document.querySelectorAll('input[name="paymentMethod"]').forEach(function(r) {
+        r.addEventListener('change', alternarPagamento);
+      });
+
+      // CPF mask
+      var cpfEl = document.getElementById('cpf');
+      if (cpfEl) {
+        cpfEl.addEventListener('input', function(e) {
+          var v = e.target.value.replace(/\D/g, '').slice(0, 11);
+          if (v.length > 9) v = v.slice(0,3) + '.' + v.slice(3,6) + '.' + v.slice(6,9) + '-' + v.slice(9);
+          else if (v.length > 6) v = v.slice(0,3) + '.' + v.slice(3,6) + '.' + v.slice(6);
+          else if (v.length > 3) v = v.slice(0,3) + '.' + v.slice(3);
+          e.target.value = v;
+        });
+        cpfEl.addEventListener('input', function() {
+          var e = document.getElementById('erroCpf');
+          if (e) e.style.display = 'none';
+        });
+      }
+
+      // Phone mask
+      var telEl = document.getElementById('telefone');
+      if (telEl) {
+        telEl.addEventListener('input', function(e) {
+          var v = e.target.value.replace(/\D/g, '').slice(0, 11);
+          if (v.length > 6) v = '(' + v.slice(0,2) + ') ' + v.slice(2,7) + '-' + v.slice(7);
+          else if (v.length > 2) v = '(' + v.slice(0,2) + ') ' + v.slice(2);
+          else if (v.length > 0) v = '(' + v;
+          e.target.value = v;
+        });
+        telEl.addEventListener('input', function() {
+          var e = document.getElementById('erroTelefone');
+          if (e) e.style.display = 'none';
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

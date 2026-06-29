@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    container_name: laet-app
+    ports:
+      - "3003:3003"
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - PORT=${PORT}
+      - SESSION_SECRET=${SESSION_SECRET}
+      - ADMIN_USER=${ADMIN_USER}
+      - ADMIN_PASS=${ADMIN_PASS}
+      - PRODUCT_NAME=${PRODUCT_NAME}
+      - PIX_KEY=${PIX_KEY}
+      - WHATSAPP_CONTACT=${WHATSAPP_CONTACT}
+    restart: unless-stopped

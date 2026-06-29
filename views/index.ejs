@@ -245,10 +245,16 @@
 8. Estes termos são regidos pela legislação brasileira. Qualquer disputa será resolvida no foro da comarca do evento.
               </p>
             </div>
-            <label class="flex items-start gap-3 cursor-pointer">
-              <input type="checkbox" name="termsAccepted" value="true"
-                class="mt-0.5 accent-white" required
-                <%= old.termsAccepted === 'true' ? 'checked' : '' %>>
+  
+              <label for="termsAccepted" class="flex items-start gap-3">
+    <input
+        id="termsAccepted"
+        type="checkbox"
+        name="termsAccepted"
+        value="true"
+        required>
+
+
               <span class="text-white/70 text-xs font-extralight leading-relaxed">
                 Aceito os termos de serviço acima. Declaro que li e compreendi todas as condições, incluindo a política de não reembolso.
               </span>

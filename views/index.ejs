@@ -176,18 +176,15 @@
                 Após realizar o PIX, envie o comprovante via WhatsApp para o número acima.
                 Seu cadastro só será confirmado após a confirmação do pagamento.
               </p>
-                <input
+<label for="termsAccepted" class="flex items-start gap-3 cursor-pointer">
+  <input
   id="termsAccepted"
   type="checkbox"
   name="termsAccepted"
   value="true"
-  class="mt-0.5 accent-white"
   required
-  <%= old.termsAccepted === 'true' ? 'checked' : '' %>
 >
-
-<label for="termsAccepted" class="flex items-start gap-3 cursor-pointer">
-  <span class="text-white/70 text-xs font-extralight leading-relaxed">
+<span class="text-white/70 text-xs font-extralight leading-relaxed">
     Aceito os termos de serviço acima. Declaro que li e compreendi todas as condições, incluindo a política de não reembolso.
   </span>
 </label>
